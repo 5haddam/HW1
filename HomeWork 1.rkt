@@ -41,6 +41,8 @@
 ; Pro každý tento bod napište separátní funkci.
 ; Váš kód by neměl obsahovat magické hodnoty.
 
+
+;; - 120, 180, 10 a 15 - stále by šly klasifikovat jako magické konstanty
 (define (numberOfPeople price)
   (- 120 (* (/ (- price 180) 10) 15)))
 
@@ -50,6 +52,7 @@
 (define (screeningCosts price fixExpenses expensesForEachPerson)
   (+ (* (numberOfPeople price) expensesForEachPerson) fixExpenses))
 
+;; předání jako parametr je v pořádku, lze ale i zavést jako konstanty na top-levelu
 (define (profit price fixExpenses expensesForEachPerson)
   (- (productFromSoldTickets price) (screeningCosts price fixExpenses expensesForEachPerson)))
 
@@ -69,6 +72,7 @@
 (profit 140 16000 8)
 (profitMagic 140)
 
+;; hezké řešení :)
 ; hledat tento profit budu vyhledáváním derivace funkce, a bod při y = 0 bude vrcholkem naše funkce
 ; (120 + (15 / 10) * (180 - price)) * price - (fixExpenses + expensesForEachPerson * (120 + (15 / 10) * (180 - price)))
 ; derivace funkce f'(price) = 390 + 1.5 * expensesForEachPerson - 3 * price (řešení jsem dal do svého githubu, ale asi ho potřebovat nebudete)
