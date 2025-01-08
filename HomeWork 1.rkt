@@ -1,9 +1,6 @@
 ;; The first three lines of this file were inserted by DrRacket. They record metadata
 ;; about the language level of this file in a form that our tools can easily process.
-#reader(lib "htdp-beginner-reader.ss" "lang")((modname |HomeWork 1|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
-;; The first three lines of this file were inserted by DrRacket. They record metadata
-;; about the language level of this file in a form that our tools can easily process.
-;; #reader(lib "htdp-beginner-reader.ss" "lang")((modname HW01-funkce-a-konstanty) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
+#reader(lib "htdp-advanced-reader.ss" "lang")((modname |HomeWork 1|) (read-case-sensitive #t) (teachpacks ()) (htdp-settings #(#t constructor repeating-decimal #f #t none #f () #f)))
 ;; Domácí úkol
 
 ; Vlastník kina v malém městě vás poprosil o přípravu
@@ -41,17 +38,26 @@
 ; Pro každý tento bod napište separátní funkci.
 ; Váš kód by neměl obsahovat magické hodnoty.
 
+(define referenceQuantinyOfPeople 120)
+(define referencePrice 180)
+(define numeratorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice 15)
+(define denominatorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice 10)
+(define fixExpenses 16000)
+(define expensesForEachPerson 8)
+
 (define (numberOfPeople price)
-  (- 120 (* (/ (- price 180) 10) 15)))
+  (- referenceQuantinyOfPeople (* (/ (- price referencePrice)
+                                     denominatorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice)
+                                  numeratorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice)))
 
 (define (productFromSoldTickets price)
   (* (numberOfPeople price) price))
 
-(define (screeningCosts price fixExpenses expensesForEachPerson)
+(define (screeningCosts price)
   (+ (* (numberOfPeople price) expensesForEachPerson) fixExpenses))
 
-(define (profit price fixExpenses expensesForEachPerson)
-  (- (productFromSoldTickets price) (screeningCosts price fixExpenses expensesForEachPerson)))
+(define (profit price)
+  (- (productFromSoldTickets price) (screeningCosts price)))
 
 
 ; Řešení lze zapsat pomocí jediné funkce a magických hodnot:
@@ -66,17 +72,21 @@
               (* (/ 15 10)
                  (- 180 price)))))))
 
-(profit 140 16000 8)
+(profit 140)
 (profitMagic 140)
 
 ; hledat tento profit budu vyhledáváním derivace funkce, a bod při y = 0 bude vrcholkem naše funkce
-; (120 + (15 / 10) * (180 - price)) * price - (fixExpenses + expensesForEachPerson * (120 + (15 / 10) * (180 - price)))
-; derivace funkce f'(price) = 390 + 1.5 * expensesForEachPerson - 3 * price (řešení jsem dal do svého githubu, ale asi ho potřebovat nebudete)
-(define (biggestProfit expensesForEachPerson)
-  (+ 130 (* 0.5 expensesForEachPerson)))
+; (referenceQuantinyOfPeople + (numeratorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice / denominatorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice) * (referencePrice - price)) *
+; * price - (fixExpenses + expensesForEachPerson *
+; * (referenceQuantinyOfPeople + (numeratorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice / denominatorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice) * (referencePrice - price)))
+; derivace funkce f'(price) = referenceQuantinyOfPeople + numeratorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice / denominatorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice *
+; (referencePrice - 2 * price + expensesForEachPerson) (řešení jsem dal do svého githubu, ale asi ho potřebovat nebudete)
+(define (biggestProfit expensesForEachPerson) ; v racketu asi nemůžu napsat nějakou funkce, do které bych nemusil dávat žádné argumenty?
+  (/ (+ (/ (* referenceQuantinyOfPeople denominatorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice)
+           numeratorOfTheCoefficientOfDependenceOfTheNumberOfPeopleOnThePrice) referencePrice expensesForEachPerson) 2))
 
-(biggestProfit 8) ; nejvýhodnější cena
-(profit (biggestProfit 8) 16000 8) 
+(biggestProfit expensesForEachPerson) ; nejvýhodnější cena
+(profit (biggestProfit expensesForEachPerson)) 
 
 ; Ujistěte se, že vaše řešení produkuje stejné výsledky jako
 ; tato funkce - vyzkoušejte hodnoty ceny 120, 130, 140, 150, ..., 200.
@@ -100,11 +110,14 @@
               (* (/ 15 10)
                  (- 180 price)))))))
 
-(profit 140 2000 80)
+(set! fixExpenses 2000); ale, tento "set!" pracuje jen když použivám level "Advanced Student" (přečetl jsem si v dokumentace, že ot tohoto levelu ta funkce se začína).
+; Tak kdybyste mi řekl jak to mužu opravit a předat do našého levlu - byl bych rád
+(set! expensesForEachPerson 80)
+(profit 140)
 (newProfitMagic 140)
 
-(biggestProfit 80) ; nejvýhodnější cena
-(profit (biggestProfit 80) 2000 80) 
+(biggestProfit expensesForEachPerson) ; nejvýhodnější cena
+(profit (biggestProfit 80)) 
 
 ; Modifikujte obě implementace (váš kód i funkci profit-magic),
 ; upravené verze nazvěte například
